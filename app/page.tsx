@@ -217,5 +217,5 @@ function AuditRow({ entry, lang }: { entry: AuditItem; lang: Language }) {
 }
 
 function Background() {
-  return <div className="background" aria-hidden="true"><span className="stars" /><span className="scan-glow" /><span className="wire-floor" /><span className="signal signal-one" /><span className="signal signal-two" /></div>;
+  return <div className="background" aria-hidden="true"><span className="stars" /><span className="architecture" /><span className="scan-glow" /><span className="wire-floor" /><span className="signal signal-one" /><span className="signal signal-two" /></div>;
 }
