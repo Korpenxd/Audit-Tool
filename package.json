@@ -9,7 +9,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "node --test",
+    "test:seo:rendered": "node scripts/rendered-seo-check.mjs"
   },
   "dependencies": {
     "next": "16.2.6",

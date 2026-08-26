@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { AuditCategory, AuditItem, AuditResult, AuditStatus, LocalizedText } from "./types";
 
 type Language = "sv" | "en";
+type Theme = "light" | "dark";
 type ResultFilter = "issues" | "critical" | "passed" | "all";
 
 const loadingCopy = {
@@ -18,7 +20,7 @@ const categoryCopy: Record<AuditCategory, LocalizedText> = {
   bestPractices: { sv: "Teknik", en: "Best practices" },
 };
 
-function Icon({ name }: { name: "arrow" | "globe" | "spark" | "check" | "warning" | "close" | "external" | "refresh" }) {
+function Icon({ name }: { name: "arrow" | "globe" | "spark" | "check" | "warning" | "close" | "external" | "refresh" | "sun" | "moon" }) {
   const paths: Record<typeof name, ReactNode> = {
     arrow: <><path d="M5 12h13" /><path d="m14 7 5 5-5 5" /></>,
     globe: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" /></>,
@@ -28,6 +30,8 @@ function Icon({ name }: { name: "arrow" | "globe" | "spark" | "check" | "warning
     close: <><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></>,
     external: <><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6H5V6h6" /></>,
     refresh: <><path d="M20 7v5h-5" /><path d="M4 17v-5h5" /><path d="M6.1 8a7 7 0 0 1 11.7-1L20 12M4 12l2.2 5a7 7 0 0 0 11.7-1" /></>,
+    sun: <><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></>,
+    moon: <path d="M20.2 14.2A8 8 0 0 1 9.8 3.8 8.5 8.5 0 1 0 20.2 14.2Z" />,
   };
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" aria-hidden="true">{paths[name]}</svg>;
 }
@@ -43,6 +47,7 @@ const pick = (text: LocalizedText, lang: Language) => text[lang];
 
 export default function AuditPage() {
   const [lang, setLang] = useState<Language>("sv");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [url, setUrl] = useState("");
   const [strategy, setStrategy] = useState<"mobile" | "desktop">("mobile");
   const [result, setResult] = useState<AuditResult | null>(null);
@@ -54,11 +59,17 @@ export default function AuditPage() {
   useEffect(() => {
     const stored = window.localStorage.getItem("birdbrain-audit-language");
     if (stored === "sv" || stored === "en") queueMicrotask(() => setLang(stored));
+    const initialTheme = document.documentElement.dataset.theme;
+    if (initialTheme === "light" || initialTheme === "dark") queueMicrotask(() => setTheme(initialTheme));
   }, []);
   useEffect(() => {
     document.documentElement.lang = lang;
     window.localStorage.setItem("birdbrain-audit-language", lang);
   }, [lang]);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  }, [theme]);
   useEffect(() => {
     if (!loading) return;
     const interval = window.setInterval(() => setLoadingStep((step) => Math.min(step + 1, 3)), 2200);
@@ -97,28 +108,36 @@ export default function AuditPage() {
   }
 
   const sv = lang === "sv";
+  const nextTheme: Theme = theme === "dark" ? "light" : "dark";
   return (
     <div className="site-shell">
       <Background />
+      <a className="skip-link" href="#main-content">{sv ? "Hoppa till innehåll" : "Skip to content"}</a>
       <header className="site-header">
-        <a className="brand" href="https://birdbrain.it" aria-label="Birdbrain IT">
-          <span className="brand-mark">B</span>
-          <span><strong>Birdbrain IT</strong><small>{sv ? "Webbplatsanalys" : "Website audit"}</small></span>
+        <a className="brand" href="https://birdbrain.it" aria-label={sv ? "Birdbrain IT – startsida" : "Birdbrain IT – home"}>
+          <span className="brand-mark"><Image src="/birdbrain-icon.svg" alt="" width={40} height={40} priority /></span>
+          <span><strong>BIRDBRAIN <i>IT</i></strong><small>{sv ? "Webbplatsanalys" : "Website audit"}</small></span>
         </a>
         <div className="header-actions">
           <a className="back-link" href="https://birdbrain.it/verktyg">{sv ? "Alla verktyg" : "All tools"} <Icon name="external" /></a>
-          <div className="language-toggle" aria-label="Language">
-            <button type="button" className={lang === "sv" ? "active" : ""} onClick={() => setLang("sv")} aria-pressed={lang === "sv"}>SV</button>
-            <button type="button" className={lang === "en" ? "active" : ""} onClick={() => setLang("en")} aria-pressed={lang === "en"}>EN</button>
-          </div>
+          <button type="button" className={`theme-toggle is-${theme}`} onClick={() => { setTheme(nextTheme); window.localStorage.setItem("birdbrain-theme", nextTheme); }} aria-label={sv ? `Byt till ${nextTheme === "dark" ? "mörkt" : "ljust"} läge` : `Switch to ${nextTheme} mode`} aria-pressed={theme === "dark"}>
+            <span className="toggle-thumb" aria-hidden="true" />
+            <span className="theme-icon theme-icon-sun" aria-hidden="true"><Icon name="sun" /></span>
+            <span className="theme-icon theme-icon-moon" aria-hidden="true"><Icon name="moon" /></span>
+          </button>
+          <button type="button" className={`language-toggle is-${lang}`} onClick={() => setLang(lang === "sv" ? "en" : "sv")} aria-label={sv ? "Byt till engelska" : "Switch to Swedish"} aria-pressed={lang === "en"}>
+            <span className="toggle-thumb" aria-hidden="true" />
+            <span className={`language-option${lang === "sv" ? " is-selected" : ""}`} aria-hidden="true">SV</span>
+            <span className={`language-option${lang === "en" ? " is-selected" : ""}`} aria-hidden="true">EN</span>
+          </button>
         </div>
       </header>
 
-      <main>
+      <main id="main-content">
         <section className={`hero ${result ? "hero-compact" : ""}`}>
           <div className="hero-copy">
             <p className="eyebrow"><span />{sv ? "Kostnadsfri webbplatsanalys" : "Free website audit"}</p>
-            <h1>{sv ? "Se vad som bromsar" : "See what is holding"}<br /><span>{sv ? "din webbplats." : "your website back."}</span></h1>
+            <h1>{sv ? "Analysera din" : "Audit your"}<br /><span>{sv ? "webbplats." : "website."}</span></h1>
             <p className="hero-lead">{sv ? "Få en tydlig genomgång av prestanda, SEO, tillgänglighet och teknik — med konkreta förbättringar i rätt ordning." : "Get a clear review of performance, SEO, accessibility and technology — with concrete improvements in the right order."}</p>
           </div>
 
@@ -132,8 +151,8 @@ export default function AuditPage() {
             <input className="honeypot" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" />
             <div className="form-options">
               <div className="strategy-toggle" aria-label={sv ? "Testläge" : "Test mode"}>
-                <button type="button" className={strategy === "mobile" ? "active" : ""} onClick={() => setStrategy("mobile")}>{sv ? "Mobil" : "Mobile"}</button>
-                <button type="button" className={strategy === "desktop" ? "active" : ""} onClick={() => setStrategy("desktop")}>Desktop</button>
+                <button type="button" className={strategy === "mobile" ? "active" : ""} onClick={() => setStrategy("mobile")} aria-pressed={strategy === "mobile"}>{sv ? "Mobil" : "Mobile"}</button>
+                <button type="button" className={strategy === "desktop" ? "active" : ""} onClick={() => setStrategy("desktop")} aria-pressed={strategy === "desktop"}>Desktop</button>
               </div>
               <p id="audit-privacy"><Icon name="spark" />{sv ? "Ingen registrering. Resultatet sparas inte." : "No registration. Your result is not saved."}</p>
             </div>
