@@ -22,10 +22,14 @@ test("both themes and responsive header controls are styled", async () => {
 
   assert.match(css, /:root\[data-theme="light"\]/);
   assert.match(css, /--bg: #edf2f8/);
+  assert.match(css, /\.site-header-inner/);
+  assert.match(css, /\.site-header \{[^}]*width: 100%/);
+  assert.match(css, /data-theme="light"\] \.wire-floor/);
   assert.match(css, /\.theme-toggle/);
   assert.match(css, /@media \(max-width: 620px\)/);
   assert.match(css, /prefers-reduced-motion: reduce/);
   assert.match(page, /className="skip-link"/);
+  assert.match(page, /className="site-header-inner"/);
   assert.match(page, /className={`language-toggle is-\$\{lang\}`}/);
   assert.match(page, /https:\/\/birdbrain\.it/);
 });

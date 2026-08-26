@@ -114,22 +114,24 @@ export default function AuditPage() {
       <Background />
       <a className="skip-link" href="#main-content">{sv ? "Hoppa till innehåll" : "Skip to content"}</a>
       <header className="site-header">
-        <a className="brand" href="https://birdbrain.it" aria-label={sv ? "Birdbrain IT – startsida" : "Birdbrain IT – home"}>
-          <span className="brand-mark"><Image src="/birdbrain-icon.svg" alt="" width={40} height={40} priority /></span>
-          <span><strong>BIRDBRAIN <i>IT</i></strong><small>{sv ? "Webbplatsanalys" : "Website audit"}</small></span>
-        </a>
-        <div className="header-actions">
-          <a className="back-link" href="https://birdbrain.it/verktyg">{sv ? "Alla verktyg" : "All tools"} <Icon name="external" /></a>
-          <button type="button" className={`theme-toggle is-${theme}`} onClick={() => { setTheme(nextTheme); window.localStorage.setItem("birdbrain-theme", nextTheme); }} aria-label={sv ? `Byt till ${nextTheme === "dark" ? "mörkt" : "ljust"} läge` : `Switch to ${nextTheme} mode`} aria-pressed={theme === "dark"}>
-            <span className="toggle-thumb" aria-hidden="true" />
-            <span className="theme-icon theme-icon-sun" aria-hidden="true"><Icon name="sun" /></span>
-            <span className="theme-icon theme-icon-moon" aria-hidden="true"><Icon name="moon" /></span>
-          </button>
-          <button type="button" className={`language-toggle is-${lang}`} onClick={() => setLang(lang === "sv" ? "en" : "sv")} aria-label={sv ? "Byt till engelska" : "Switch to Swedish"} aria-pressed={lang === "en"}>
-            <span className="toggle-thumb" aria-hidden="true" />
-            <span className={`language-option${lang === "sv" ? " is-selected" : ""}`} aria-hidden="true">SV</span>
-            <span className={`language-option${lang === "en" ? " is-selected" : ""}`} aria-hidden="true">EN</span>
-          </button>
+        <div className="site-header-inner">
+          <a className="brand" href="https://birdbrain.it" aria-label={sv ? "Birdbrain IT – startsida" : "Birdbrain IT – home"}>
+            <span className="brand-mark"><Image src="/birdbrain-icon.svg" alt="" width={40} height={40} priority /></span>
+            <span><strong>BIRDBRAIN <i>IT</i></strong><small>{sv ? "Webbplatsanalys" : "Website audit"}</small></span>
+          </a>
+          <div className="header-actions">
+            <a className="back-link" href="https://birdbrain.it/verktyg">{sv ? "Alla verktyg" : "All tools"} <Icon name="external" /></a>
+            <button type="button" className={`theme-toggle is-${theme}`} onClick={() => { setTheme(nextTheme); window.localStorage.setItem("birdbrain-theme", nextTheme); }} aria-label={sv ? `Byt till ${nextTheme === "dark" ? "mörkt" : "ljust"} läge` : `Switch to ${nextTheme} mode`} aria-pressed={theme === "dark"}>
+              <span className="toggle-thumb" aria-hidden="true" />
+              <span className="theme-icon theme-icon-sun" aria-hidden="true"><Icon name="sun" /></span>
+              <span className="theme-icon theme-icon-moon" aria-hidden="true"><Icon name="moon" /></span>
+            </button>
+            <button type="button" className={`language-toggle is-${lang}`} onClick={() => setLang(lang === "sv" ? "en" : "sv")} aria-label={sv ? "Byt till engelska" : "Switch to Swedish"} aria-pressed={lang === "en"}>
+              <span className="toggle-thumb" aria-hidden="true" />
+              <span className={`language-option${lang === "sv" ? " is-selected" : ""}`} aria-hidden="true">SV</span>
+              <span className={`language-option${lang === "en" ? " is-selected" : ""}`} aria-hidden="true">EN</span>
+            </button>
+          </div>
         </div>
       </header>
 
