@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { AuditCategory, AuditItem, AuditResult, AuditStatus, LocalizedText } from "./types";
+import { buildAuditContactUrl } from "./lib/contact-handoff";
 
 type Language = "sv" | "en";
 type Theme = "light" | "dark";
@@ -183,6 +184,7 @@ export default function AuditPage() {
 
 function Results({ result, lang, filter, setFilter, visibleItems, onReset }: { result: AuditResult; lang: Language; filter: ResultFilter; setFilter: (filter: ResultFilter) => void; visibleItems: AuditItem[]; onReset: () => void }) {
   const sv = lang === "sv";
+  const contactUrl = buildAuditContactUrl(result, lang);
   const tone = scoreTone(result.overallScore);
   const scoreStyle = { "--score-angle": `${result.overallScore * 3.6}deg` } as CSSProperties;
   const date = new Intl.DateTimeFormat(sv ? "sv-SE" : "en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(result.scannedAt));
@@ -205,7 +207,7 @@ function Results({ result, lang, filter, setFilter, visibleItems, onReset }: { r
         <div className="results-toolbar"><div><h3>{sv ? "Kontroller och rekommendationer" : "Checks and recommendations"}</h3><p>{sv ? "Börja uppifrån — listan är sorterad efter prioritet." : "Start at the top — the list is sorted by priority."}</p></div><div className="filter-tabs" role="tablist" aria-label={sv ? "Filtrera kontroller" : "Filter checks"}>{options.map(([value, label, count]) => <button type="button" role="tab" aria-selected={filter === value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)} key={value}>{label}<span>{count}</span></button>)}</div></div>
         <div className="audit-list">{visibleItems.length ? visibleItems.map((entry) => <AuditRow entry={entry} lang={lang} key={entry.id} />) : <p className="empty-state">{sv ? "Inga kontroller i det här filtret." : "No checks in this filter."}</p>}</div>
       </div>
-      <div className="results-cta"><div><p className="eyebrow"><span />Birdbrain IT</p><h3>{sv ? "Vill du ha hjälp att förbättra resultatet?" : "Would you like help improving the result?"}</h3><p>{sv ? "Jag kan gå igenom rapporten, prioritera rätt åtgärder och hjälpa dig genomföra dem." : "I can review the report, prioritize the right changes and help you implement them."}</p></div><a className="primary-button" href={`mailto:Hello@birdbrain.it?subject=${encodeURIComponent(`Webbplatsanalys: ${result.host}`)}`}>{sv ? "Prata med mig" : "Talk to me"}<Icon name="arrow" /></a></div>
+      <div className="results-cta"><div><p className="eyebrow"><span />Birdbrain IT</p><h3>{sv ? "Vill du ha hjälp att förbättra resultatet?" : "Would you like help improving the result?"}</h3><p>{sv ? "Jag kan gå igenom rapporten, prioritera rätt åtgärder och hjälpa dig genomföra dem." : "I can review the report, prioritize the right changes and help you implement them."}</p></div><a className="primary-button" href={contactUrl} target="_blank" rel="noopener noreferrer">{sv ? "Få hjälp med resultatet" : "Get help with the results"}<Icon name="arrow" /></a></div>
       <p className="results-note">{sv ? "Resultatet är en automatisk ögonblicksbild. Design, innehåll och affärsmål behöver alltid bedömas av en människa." : "The result is an automated snapshot. Design, content and business goals still require human judgment."}</p>
     </section>
   );
