@@ -5,10 +5,10 @@ export const AUDIT_CANONICAL_URL = `${AUDIT_ORIGIN}/`;
 export const AUDIT_TITLE = "Gratis webbplatsanalys | Birdbrain IT";
 export const AUDIT_DESCRIPTION = "Analysera din webbplats kostnadsfritt och få tydliga förbättringsförslag för prestanda, SEO, tillgänglighet och teknik från Birdbrain IT.";
 export const AUDIT_SOCIAL_IMAGE = {
-  url: "/images/birdbrain-og.png",
+  url: "/og/audit-preview.png",
   width: 1200,
   height: 630,
-  alt: "Birdbrain IT med en neonillustration av en korp",
+  alt: "Birdbrain IT website audit showing performance, SEO and accessibility results",
 };
 
 export const auditMetadata: Metadata = {

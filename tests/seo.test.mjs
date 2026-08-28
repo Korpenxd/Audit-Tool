@@ -14,11 +14,22 @@ test("SEO metadata is complete, canonical, and production-safe", async () => {
   assert.match(layout, /rel="canonical" href="https:\/\/audit\.birdbrain\.it\/"/);
   assert.match(seo, /card: "summary_large_image"/);
   assert.match(seo, /type: "website"/);
+  assert.match(seo, /url: "\/og\/audit-preview\.png"/);
+  assert.match(seo, /Birdbrain IT website audit showing performance, SEO and accessibility results/);
+  assert.match(seo, /openGraph:[\s\S]*images: \[AUDIT_SOCIAL_IMAGE\]/);
+  assert.match(seo, /twitter:[\s\S]*images: \[AUDIT_SOCIAL_IMAGE\]/);
   assert.match(seo, /type: "image\/svg\+xml"/);
   assert.match(seo, /index: true/);
   assert.match(layout, /application\/ld\+json/);
   assert.match(layout, /auditWebApplicationJsonLd/);
   assert.doesNotMatch(`${seo}\n${layout}`, /localhost|vercel\.app/i);
+});
+
+test("Audit social image has the expected PNG dimensions", async () => {
+  const image = await readFile(new URL("../public/og/audit-preview.png", import.meta.url));
+  assert.equal(image.subarray(1, 4).toString("ascii"), "PNG");
+  assert.equal(image.readUInt32BE(16), 1200);
+  assert.equal(image.readUInt32BE(20), 630);
 });
 
 test("robots and sitemap expose only the public root", async () => {
